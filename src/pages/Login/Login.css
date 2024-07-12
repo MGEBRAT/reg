@@ -52,6 +52,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     font-size: 13.5px;
+
     &:hover {
         background-color: #c08989;
         color: #f3e8e8;

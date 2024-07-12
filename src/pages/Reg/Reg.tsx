@@ -1,7 +1,7 @@
 import { Button } from "@/src/shared/ui/Button/Button"
 import './Reg.css'
 import { FormEvent, useState } from "react"
-import useRegister from "./model"
+
 import { Input } from "@/src/shared/ui/Input/Input"
 
 export default function Reg() {
@@ -9,10 +9,32 @@ export default function Reg() {
     const [password, setPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [email, setEmail] = useState('')
-    const { register } = useRegister()
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+
+    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        register({ email, username, password })
+
+        try {
+            const response = await fetch('http://localhost:1337/api/auth/local/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username,
+                    email,
+                    password,
+                }),
+            })
+
+            if (!response.ok) {
+                throw new Error(`ошьебка ${response.status}`)
+            }
+
+            const data = await response.json()
+            console.log('Выполнено:', data)
+        } catch (error) {
+            console.error('ошибка с регистрацией', error)
+        }
     }
     return (
         <div className="content">
@@ -28,7 +50,7 @@ export default function Reg() {
                 </div>
                 <div className="buttons">
                     <Button text="Зарегистрироваться" className="reg-button" />
-                    <Button text="Войти" className="login-button" />
+                    <a className="login-button" href="/login">Войти</a>
                 </div>
             </form>
         </div>
